@@ -1,0 +1,66 @@
+---
+output: 
+  github_document: 
+    pandoc_args: ["--smart"]
+---
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "README-"
+)
+```
+
+# conditionR
+
+<!-- [![Build Status](https://travis-ci.org/akersting/conditionR.svg?branch=develop)](https://travis-ci.org/akersting/conditionR) -->
+<!-- [![Coverage Status](https://codecov.io/github/akersting/conditionR/coverage.svg?branch=develop)](https://codecov.io/github/akersting/conditionR) -->
+
+## Installation
+There is no stable release of conditionR yet. To install the latest 
+development version run:
+```{r, eval = FALSE}
+devtools::install_github("akersting/conditionR@develop")
+```
+
+## Introductory Examples
+
+```{r, error = TRUE}
+library(conditionR)
+
+f <- function(x) {
+  setErrorContext("someErrorClass", "There was an error in f().")
+  if (is.na(x)) {
+    signal(stackError("x must not be NA.", "NAError"))
+  }
+  
+}
+
+setErrorContext("globalErrorClass", "A global error message.", call = FALSE)
+
+f(NA)
+```
+
+
+```{r, error = TRUE}
+lowLevelFUN <- function() {
+  signal(stackError("A low level error message.", 
+                    c("lowLevelError", "evenLowerLevelError")))
+}
+
+highLevelFUN <- function() {
+  setErrorContext("highLevelError", "A high level error message.")
+  lowLevelFUN()
+}
+
+highLevelFUN()
+```
+
+```{r}
+tryCatch(
+  highLevelFUN(),
+  error = function(e) class(e)
+)
+```
+
