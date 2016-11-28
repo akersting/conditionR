@@ -10,6 +10,10 @@
 \alias{stackMessage}
 \alias{stackWarning}
 \alias{stackedConditions}
+\alias{unsetConditionContext}
+\alias{unsetErrorContext}
+\alias{unsetMessageContext}
+\alias{unsetWarningContext}
 \title{Conditional Stack-Based Errors and Conditions}
 \usage{
 setConditionContext(class, message = character(), base_class = NULL,
@@ -23,6 +27,14 @@ setWarningContext(class, message = character(), base_class = NULL,
 
 setMessageContext(class, message = character(), base_class = NULL,
   call = NULL, ...)
+
+unsetConditionContext(base_class = NULL, type = "none")
+
+unsetErrorContext(base_class = NULL)
+
+unsetWarningContext(base_class = NULL)
+
+unsetMessageContext(base_class = NULL)
 
 stackCondition(message, class = character(), base_class = NULL,
   call = NULL, type = "none", ...)
@@ -76,12 +88,13 @@ elements with the same name are specified on multiple levels only the
 lowest level one will be included.}
 }
 \value{
-\code{set*Context} is invoked for its side effects, \code{stack*}
-  returns a condition object.
+\code{set*Context} and \code{unset*Context} are invoked for their
+  side effects, \code{stack*} returns a condition object.
 }
 \description{
 \code{set*Context} is used to set condition contexts along the function call
 stack and \code{stack*} to construct a condition object herefrom.
+\code{unset*Context} removes a previously set condition context.
 }
 \seealso{
 \code{\link{signal}} for the preferred way to signal a condition

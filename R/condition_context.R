@@ -2,6 +2,7 @@
 #'
 #' \code{set*Context} is used to set condition contexts along the function call
 #' stack and \code{stack*} to construct a condition object herefrom.
+#' \code{unset*Context} removes a previously set condition context.
 #'
 #' @param class a character vector of classes the condition object to be
 #'   constructed should inherit form (from general to specific). "error",
@@ -39,8 +40,8 @@
 #' @seealso \code{\link{signal}} for the preferred way to signal a condition
 #'   object constructed by \code{stack*}.
 #'
-#' @return \code{set*Context} is invoked for its side effects, \code{stack*}
-#'   returns a condition object.
+#' @return \code{set*Context} and \code{unset*Context} are invoked for their
+#'   side effects, \code{stack*} returns a condition object.
 #'
 #' @name stackedConditions
 NULL
@@ -159,4 +160,59 @@ setMessageContext <- function(class, message = character(), base_class = NULL,
   .setConditionContext(class = class, message = message,
                        base_class = base_class, call = call,
                        type = "message", ellipsis = list(...))
+}
+
+.unsetConditionContext <- function(base_class, type) {
+  if (!is.null(base_class) && (!is.character(base_class) ||
+                               length(base_class) != 1 ||
+                               is.na(base_class) ||
+                               nchar(base_class) == 0)) {
+    stop("'base_class' must be a character string (or NULL).")
+  }
+  if (!is.null(base_class) &&
+      base_class %in% c("error", "warning", "message", "default")) {
+    stop("'base_class' must be not be 'error', 'warning', 'message' or ",
+         "'default'.")
+  }
+  if (is.null(base_class)) {
+    base_class <- "default"
+  }
+
+  if (!is.character(type) || length(type) != 1 || is.na(type) ||
+      !type %in% c("error", "warning", "message", "none")) {
+    stop("'type' must be one of 'error', 'warning', 'message' or 'none'.")
+  }
+
+  env <- parent.frame(2)
+  attr(env, "conditionR_contexts")[[type]][[base_class]] <- NULL
+
+  invisible()
+}
+
+#' @rdname stackedConditions
+#'
+#' @export
+unsetConditionContext <- function(base_class = NULL, type = "none") {
+  .unsetConditionContext(base_class, type = type)
+}
+
+#' @rdname stackedConditions
+#'
+#' @export
+unsetErrorContext <- function(base_class = NULL) {
+  .unsetConditionContext(base_class, type = "error")
+}
+
+#' @rdname stackedConditions
+#'
+#' @export
+unsetWarningContext <- function(base_class = NULL) {
+  .unsetConditionContext(base_class, type = "warning")
+}
+
+#' @rdname stackedConditions
+#'
+#' @export
+unsetMessageContext <- function(base_class = NULL) {
+  .unsetConditionContext(base_class, type = "message")
 }
