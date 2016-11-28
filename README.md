@@ -2,8 +2,8 @@
 conditionR
 ==========
 
-<!-- [![Build Status](https://travis-ci.org/akersting/conditionR.svg?branch=develop)](https://travis-ci.org/akersting/conditionR) -->
-<!-- [![Coverage Status](https://codecov.io/github/akersting/conditionR/coverage.svg?branch=develop)](https://codecov.io/github/akersting/conditionR) -->
+[![Build Status](https://travis-ci.org/akersting/conditionR.svg?branch=develop)](https://travis-ci.org/akersting/conditionR) [![Coverage Status](https://codecov.io/github/akersting/conditionR/coverage.svg?branch=develop)](https://codecov.io/github/akersting/conditionR)
+
 Installation
 ------------
 
