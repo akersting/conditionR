@@ -4,7 +4,7 @@
 \alias{contextualize}
 \title{Contextualize (Simple) Conditions}
 \usage{
-contextualize(expr, ..., regex = FALSE, include_original_message = TRUE)
+contextualize(expr, ..., include_original_message = TRUE)
 }
 \arguments{
 \item{expr}{an expression which potentially signals a condition.}
@@ -13,12 +13,8 @@ contextualize(expr, ..., regex = FALSE, include_original_message = TRUE)
 lists are passed as arguments to \code{stackCondition}, i.e. an element
 "message" must be present if \code{include_original_message == FALSE}. If
 missing, "type" is automatically derived from the type of the caught
-condition. "call" is ignored.}
-
-\item{regex}{a logical value. If \code{FALSE} (the default), then the names
-of the \code{...} arguments refer to the class of the condition object. If
-\code{TRUE}, the names of the \code{...} arguments are treated as regular
-expressions against which the condition message is matched.}
+condition. "call" is ignored. The names of these arguments refer to the
+class of the condition object.}
 
 \item{include_original_message}{a logical value. Should the message of the
 caught condition be appended to the message specified in the chosen
