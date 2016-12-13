@@ -14,7 +14,8 @@
 #'   caught condition be appended to the message specified in the chosen
 #'   \code{...} list?
 #'
-#' @return whatever \code{expr} returns.
+#' @return \code{NULL} (invisibly) if a condition was caught, otherwise whatever
+#'   \code{expr} returns.
 #'
 #' @export
 contextualize <- function(expr, ..., include_original_message = TRUE) {
@@ -26,7 +27,15 @@ contextualize <- function(expr, ..., include_original_message = TRUE) {
                                          include_original_message)
   }
 
-  signal(do.call(tryCatch, c(quote(expr), handlers)))
+  res <- do.call(tryCatch, c(quote(expr), handlers))
+
+  if (isTRUE(attr(res, ".conditionR_contextualized_condition"))) {
+    attr(res, ".conditionR_contextualized_condition") <- NULL
+    signal(res)
+    invisible(NULL)
+  } else {
+    res
+  }
 }
 
 getHandlerFun <- function(context, include_original_message) {
@@ -52,6 +61,10 @@ getHandlerFun <- function(context, include_original_message) {
     if (is.null(cond_new[["call"]])) {
       cond_new[["call"]] <- cond[["call"]]
     }
+
+    # make this condition object distinguishable from a condition object being
+    # returned by expr (which we must not signal)
+    attr(cond_new, ".conditionR_contextualized_condition") <- TRUE
 
     # we must not signal cond_new here already since handlers which were
     # established in the same tryCatch-call after this handler have not been

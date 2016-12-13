@@ -21,7 +21,8 @@ caught condition be appended to the message specified in the chosen
 \code{...} list?}
 }
 \value{
-whatever \code{expr} returns.
+\code{NULL} (invisibly) if a condition was caught, otherwise whatever
+  \code{expr} returns.
 }
 \description{
 \code{contextualize} catches (simple) conditions and instead signals a
