@@ -37,6 +37,16 @@
 #'   elements with the same name are specified on multiple levels only the
 #'   lowest level one will be included.
 #'
+#' @details To skip argument checking in \code{set*Context} (and hence speedup
+#'   the setting of condition contexts) create a local variable
+#'   \code{.conditionR_skip_context_checks} which \code{\link[base]{isTRUE}}.
+#'   "Local" here means in the environment from which \code{set*Context} is
+#'   called, or in an enclosing environment up to the first namespace or the
+#'   global environment. This is mainly intended to be used by other packages
+#'   depending on \code{conditionR}, where
+#'   \code{.conditionR_skip_context_checks} would be set in the packages'
+#'   namespaces once testing is complete.
+#'
 #' @seealso \code{\link{signal}} for the preferred way to signal a condition
 #'   object constructed by \code{stack*}.
 #'
@@ -52,59 +62,64 @@ NULL
 
   if (!is.null(base_class) && missing(class)) {
     class <- character()
-  } else if (!is.character(class) || length(class) == 0 || any(is.na(class))) {
-    stop("'class' must be a (non-empty) character vector (without NAs).")
   }
 
-  if (!is.character(message) || any(is.na(message))) {
-    stop("'message' must be a character vector (without NAs).")
-  }
-  if (length(message) >= 2 && (
-    is.null(names(message)) ||
-    any(is.na(names(message))) ||
-    sum(nchar(message) == 0) >= 2 ||
-    length(unique(names(message))) != length(message))
-  ) {
-    stop("If 'message' has two or more elements, only one of them may be ",
-         "unnamed. All others must have a unique name.")
-  }
+  if (!isTRUE(getLocal0(".conditionR_skip_context_checks", env))) {
+    if (!is.character(class) || (is.null(base_class) && length(class) == 0) ||
+        any(is.na(class))) {
+      stop("'class' must be a (non-empty) character vector (without NAs).")
+    }
 
-  if (!is.null(base_class) && (!is.character(base_class) ||
-                               length(base_class) != 1 ||
-                               is.na(base_class) ||
-                               nchar(base_class) == 0)) {
-    stop("'base_class' must be a character string (or NULL).")
-  }
-  if (!is.null(base_class) &&
-      base_class %in% c("error", "warning", "message", "default")) {
-    stop("'base_class' must be not be 'error', 'warning', 'message' or ",
-         "'default'.")
-  }
-  if (is.null(base_class)) {
-    base_class <- "default"
-  }
+    if (!is.character(message) || any(is.na(message))) {
+      stop("'message' must be a character vector (without NAs).")
+    }
+    if (length(message) >= 2 && (
+      is.null(names(message)) ||
+      any(is.na(names(message))) ||
+      sum(nchar(message) == 0) >= 2 ||
+      length(unique(names(message))) != length(message))
+    ) {
+      stop("If 'message' has two or more elements, only one of them may be ",
+           "unnamed. All others must have a unique name.")
+    }
 
-  if (!is.null(call) && (!is.logical(call) || length(call) != 1 ||
-                         is.na(call))) {
-    stop("'call' must be a logical value (or NULL).")
-  }
-  if (identical(env, .GlobalEnv) && !is.null(call) && call) {
-    warning("'call = TRUE' will be ignored if a context is set in the global ",
-            "environment.")
-  }
+    if (!is.null(base_class) && (!is.character(base_class) ||
+                                 length(base_class) != 1 ||
+                                 is.na(base_class) ||
+                                 nchar(base_class) == 0)) {
+      stop("'base_class' must be a character string (or NULL).")
+    }
+    if (!is.null(base_class) &&
+        base_class %in% c("error", "warning", "message", "default")) {
+      stop("'base_class' must be not be 'error', 'warning', 'message' or ",
+           "'default'.")
+    }
 
-  if (!is.character(type) || length(type) != 1 || is.na(type) ||
-      !type %in% c("error", "warning", "message", "none")) {
-    stop("'type' must be one of 'error', 'warning', 'message' or 'none'.")
-  }
+    if (!is.null(call) && (!is.logical(call) || length(call) != 1 ||
+                           is.na(call))) {
+      stop("'call' must be a logical value (or NULL).")
+    }
+    if (identical(env, .GlobalEnv) && !is.null(call) && call) {
+      warning("'call = TRUE' will be ignored if a context is set in the global ",
+              "environment.")
+    }
 
-  if (length(ellipsis) >= 1 && (is.null(names(ellipsis)) ||
-                                any(is.na(names(ellipsis))) ||
-                                any(names(ellipsis) == ""))) {
-    stop("All additional arguments (...) must be named.")
+    if (!is.character(type) || length(type) != 1 || is.na(type) ||
+        !type %in% c("error", "warning", "message", "none")) {
+      stop("'type' must be one of 'error', 'warning', 'message' or 'none'.")
+    }
+
+    if (length(ellipsis) >= 1 && (is.null(names(ellipsis)) ||
+                                  any(is.na(names(ellipsis))) ||
+                                  any(names(ellipsis) == ""))) {
+      stop("All additional arguments (...) must be named.")
+    }
   }
 
   # add to list of condition contexts ------------------------------------------
+  if (is.null(base_class)) {
+    base_class <- "default"
+  }
   if (is.null(attr(env, "conditionR_contexts", exact = TRUE))) {
     attr(env, "conditionR_contexts") <- list()
   }

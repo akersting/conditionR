@@ -96,6 +96,17 @@ lowest level one will be included.}
 stack and \code{stack*} to construct a condition object herefrom.
 \code{unset*Context} removes a previously set condition context.
 }
+\details{
+To skip argument checking in \code{set*Context} (and hence speedup
+  the setting of condition contexts) create a local variable
+  \code{.conditionR_skip_context_checks} which \code{\link[base]{isTRUE}}.
+  "Local" here means in the environment from which \code{set*Context} is
+  called, or in an enclosing environment up to the first namespace or the
+  global environment. This is mainly intended to be used by other packages
+  depending on \code{conditionR}, where
+  \code{.conditionR_skip_context_checks} would be set in the packages'
+  namespaces once testing is complete.
+}
 \seealso{
 \code{\link{signal}} for the preferred way to signal a condition
   object constructed by \code{stack*}.
