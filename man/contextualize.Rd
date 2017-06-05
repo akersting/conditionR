@@ -28,4 +28,3 @@ caught condition be appended to the message specified in the chosen
 \code{contextualize} catches (simple) conditions and instead signals a
 stacked condition.
 }
-
