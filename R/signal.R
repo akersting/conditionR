@@ -11,7 +11,8 @@
 #' @details Errors are signaled offering an "ignoreError"-restart. If invoked,
 #'   execution will continue after the call to \code{signal}.
 #'
-#' @return these functions are invoked for their side effects.
+#' @return these functions are invoked for their side effects and return
+#'   \code{NULL} invisibly.
 #'
 #' @export
 signal <- function(cond) {
@@ -27,21 +28,25 @@ signal.error <- function(cond) {
     stop(cond),
     ignoreError = function() NULL
   )
+  invisible(NULL)
 }
 
 #' @export
 signal.warning <- function(cond) {
   warning(cond)
+  invisible(NULL)
 }
 
 #' @export
 signal.message <- function(cond) {
   message(cond)
+  invisible(NULL)
 }
 
 #' @export
 signal.condition <- function(cond) {
   signalCondition(cond)
+  invisible(NULL)
 }
 
 #' @rdname signal

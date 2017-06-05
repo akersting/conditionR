@@ -1,7 +1,7 @@
 Package: conditionR
 Type: Package
 Title: Conditional Stack-Based Errors and Conditions
-Version: 0.0.0.9005
+Version: 0.0.0.9006
 Date: 2017-06-05
 Authors@R: person("Andreas", "Kersting", role = c("aut", "cre"),
     email = "andreas@akersting.de")

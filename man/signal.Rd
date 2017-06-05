@@ -15,7 +15,8 @@ ignoreError(e)
 \item{e}{the condition, i.e. error, object (ignored).}
 }
 \value{
-these functions are invoked for their side effects.
+these functions are invoked for their side effects and return
+  \code{NULL} invisibly.
 }
 \description{
 \code{signal} is a generic which chooses the appropriate base function for
