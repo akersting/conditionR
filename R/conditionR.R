@@ -2,4 +2,5 @@
 #'
 #' @name conditionR
 #' @docType package
+#' @useDynLib conditionR, .registration = TRUE, .fixes = "C_"
 NULL

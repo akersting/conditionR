@@ -4,6 +4,7 @@
  * The documentation of these functions is in R/internal_c.R.
  */
 
+#include "internal.h"
 #include <Rinternals.h>
 
 SEXP getLocal0(SEXP varname, SEXP env, SEXP ifnotfound) {
