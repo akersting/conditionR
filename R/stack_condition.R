@@ -66,8 +66,9 @@
   unique_frame_ids <- which(!duplicated(c(.GlobalEnv, sys.frames()))) - 1
   cntr <- 1
   for (i in rev(unique_frame_ids)[-seq_len(frames2skip)]) {
-    condition_context <- attr(sys.frame(i), "conditionR_contexts",
-                              exact = TRUE)[[type]][[base_class]]
+    env <- sys.frame(i)
+    env_addr <- getAddress(env)
+    condition_context <- contexts[[env_addr]][[type]][[base_class]]
 
     if (is.null(condition_context)) {
       next

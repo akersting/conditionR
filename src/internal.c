@@ -39,3 +39,9 @@ SEXP getLocal0(SEXP varname, SEXP env, SEXP ifnotfound) {
 
   return ifnotfound;
 }
+
+SEXP getSEXPAddress(SEXP obj) {
+   char addr[20];
+   snprintf(addr, 20, "%p", (void*) obj);
+   return mkString(addr);
+}

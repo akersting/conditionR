@@ -56,6 +56,8 @@
 #' @name stackedConditions
 NULL
 
+contexts <- new.env(parent = emptyenv())
+
 .setConditionContext <- function(class, message, base_class, call, type,
                                  ellipsis) {
   env <- parent.frame(2)  # where to set the context
@@ -120,9 +122,6 @@ NULL
   if (is.null(base_class)) {
     base_class <- "default"
   }
-  if (is.null(attr(env, "conditionR_contexts", exact = TRUE))) {
-    attr(env, "conditionR_contexts") <- list()
-  }
 
   condition_context <- list(
     class = class,
@@ -131,8 +130,15 @@ NULL
     "..." = ellipsis
   )
 
-  attr(env, "conditionR_contexts")[[type]][[base_class]] <-
-    condition_context
+  env_addr <- getAddress(env)
+  if (is.null(contexts[[env_addr]])) {
+      l <- list()
+      l[[type]][[base_class]] <- condition_context
+      contexts[[env_addr]] <- l
+      reg.finalizer(env, removeConditionContextList)
+  } else {
+    contexts[[env_addr]][[type]][[base_class]] <- condition_context
+  }
 
   invisible(NULL)
 }
@@ -199,7 +205,8 @@ setMessageContext <- function(class, message = character(), base_class = NULL,
   }
 
   env <- parent.frame(2)
-  attr(env, "conditionR_contexts")[[type]][[base_class]] <- NULL
+  env_addr <- getAddress(env)
+  contexts[[env_addr]][[type]][[base_class]] <- NULL
 
   invisible()
 }
@@ -230,4 +237,13 @@ unsetWarningContext <- function(base_class = NULL) {
 #' @export
 unsetMessageContext <- function(base_class = NULL) {
   .unsetConditionContext(base_class, type = "message")
+}
+
+removeConditionContextList <- function(env) {
+  if (isNamespaceLoaded("conditionR")) {
+    env_addr <- getAddress(env)
+    rm(list = env_addr, envir = contexts)
+  }
+
+  invisible(NULL)
 }

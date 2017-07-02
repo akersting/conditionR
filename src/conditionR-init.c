@@ -4,6 +4,7 @@
 void R_init_conditionR(DllInfo *info) {
   static const R_CallMethodDef callMethods[]  = {
     {"getLocal0", (DL_FUNC) &getLocal0, 3},
+    {"getSEXPAddress", (DL_FUNC) &getSEXPAddress, 1},
     {NULL, NULL, 0}
   };
 

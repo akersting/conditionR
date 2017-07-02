@@ -4,5 +4,6 @@
 #include <Rinternals.h>
 
 SEXP getLocal0(SEXP, SEXP, SEXP);
+SEXP getSEXPAddress(SEXP);
 
 #endif
